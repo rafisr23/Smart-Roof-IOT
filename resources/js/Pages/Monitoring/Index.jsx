@@ -1,7 +1,7 @@
+// NPM Modules
 import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/inertia-react";
-import "../../css/app.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag, faMoon } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -13,6 +13,8 @@ import {
   faCloudSun,
   faCloudSunRain,
   faCloudRain,
+  faLocation,
+  faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 // import {
 //   solid,
@@ -23,6 +25,9 @@ import {
 import "flowbite";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
+
+// Local
+import "../../../css/app.css";
 
 export default function Monitoring(props) {
   return (
@@ -38,21 +43,23 @@ export default function Monitoring(props) {
                   <h1 className="text-slate-50 text-5xl font-bold">
                     Smart Roof Monitoring
                   </h1>
-                  <p className="text-slate-400">Bojongsoang, Kab. Bandung</p>
+                  <p className="text-slate-400 mt-1">
+                    <FontAwesomeIcon
+                      icon={faLocationDot}
+                      className="mr-2"
+                    ></FontAwesomeIcon>
+                    Bojongsoang, Kab. Bandung
+                  </p>
                 </div>
                 <div className="grid-rows-2 bg-kedua rounded-3xl ml-10 px-10 pt-10 pb-1">
                   <div className="md:grid grid-cols-2 items-center justify-center content-center">
                     <div className="">
-                      <img
-                        src="/img/cloudy.png"
-                        alt=""
-                        width={250}
-                        className=""
-                      />
+                      <img src={props.icon} alt="" width={250} className="" />
                     </div>
                     <div className="">
                       <p className="text-slate-50 inline text-8xl text-center">
-                        28<span>&#8451;</span>
+                        {Math.round(props.currentTempt["temp"])}
+                        <span>&#8451;</span>
                       </p>
                     </div>
                   </div>
@@ -74,7 +81,7 @@ export default function Monitoring(props) {
                             icon={faTemperatureThreeQuarters}
                             className="mr-2"
                           ></FontAwesomeIcon>{" "}
-                          90%
+                          {props.currentTempt["humidity"]} %
                         </p>
                       </div>
                       <div className="wind">
@@ -83,7 +90,7 @@ export default function Monitoring(props) {
                             icon={faWind}
                             className="mr-2"
                           ></FontAwesomeIcon>{" "}
-                          19km/h
+                          {props.currentTempt["wind"]} m/s
                         </p>
                       </div>
                     </div>
@@ -107,7 +114,7 @@ export default function Monitoring(props) {
                   <h1 className="text-slate-50 text-3xl font-bold">
                     Good Morning, {props.auth.user.name}
                   </h1>
-                  <p className="text-slate-400">Have a nice day!</p>
+                  <p className="text-slate-400 mt-1">Have a nice day!</p>
                   {/* <div className="profile inline">
                   <img src="/img/man.png" alt="" width={70} className="" />
                 </div> */}
@@ -115,28 +122,29 @@ export default function Monitoring(props) {
                 <div className="weather p-10 grid-rows-5 bg-kedua rounded-3xl mx-10">
                   <div className="today mb-10">
                     <h1 className="text-slate-50 text-2xl font-bold">Today</h1>
-                    <p className="text-slate-400 text-xl">24 Oct 2022</p>
+                    <p className="text-slate-400 text-xl">{props.date}</p>
                   </div>
                   <div className="first bg-primary rounded-3xl mb-10">
                     <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
                       <div className="jam">
-                        <p className="text-slate-50 text-lg">15.00</p>
+                        <p className="text-slate-50 text-lg">09.00</p>
                       </div>
                       <div className="img">
-                        <FontAwesomeIcon
-                          icon={faSun}
-                          className="text-3xl text-slate-50"
-                        ></FontAwesomeIcon>
-                        {/* <img
-                        src="/img/cloudy.png"
-                        alt=""
-                        width={50}
-                        className="items-center justify-center content-center"
-                      /> */}
+                        <img
+                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[1]["weather"][0]["icon"]}.png`}
+                          alt=""
+                          className="text-center"
+                          title={
+                            props.forecastWeather[1]["weather"][0][
+                              "description"
+                            ]
+                          }
+                        />
                       </div>
                       <div className="tempt">
                         <p className="text-slate-50 text-lg">
-                          29<span>&#8451;</span>
+                          {Math.round(props.forecastWeather[1]["main"]["temp"])}
+                          <span>&#8451;</span>
                         </p>
                       </div>
                     </div>
@@ -144,23 +152,24 @@ export default function Monitoring(props) {
                   <div className="second bg-primary rounded-3xl mb-10">
                     <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
                       <div className="jam">
-                        <p className="text-slate-50 text-lg">15.00</p>
+                        <p className="text-slate-50 text-lg">12.00</p>
                       </div>
                       <div className="img">
-                        <FontAwesomeIcon
-                          icon={faCloudSun}
-                          className="text-3xl text-slate-50"
-                        ></FontAwesomeIcon>
-                        {/* <img
-                        src="/img/cloudy.png"
-                        alt=""
-                        width={50}
-                        className=""
-                      /> */}
+                        <img
+                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[2]["weather"][0]["icon"]}.png`}
+                          alt=""
+                          className="text-center"
+                          title={
+                            props.forecastWeather[2]["weather"][0][
+                              "description"
+                            ]
+                          }
+                        />
                       </div>
                       <div className="tempt">
                         <p className="text-slate-50 text-lg">
-                          29<span>&#8451;</span>
+                          {Math.round(props.forecastWeather[2]["main"]["temp"])}
+                          <span>&#8451;</span>
                         </p>
                       </div>
                     </div>
@@ -171,20 +180,21 @@ export default function Monitoring(props) {
                         <p className="text-slate-50 text-lg">15.00</p>
                       </div>
                       <div className="img">
-                        <FontAwesomeIcon
-                          icon={faCloudSunRain}
-                          className="text-3xl text-slate-50"
-                        ></FontAwesomeIcon>
-                        {/* <img
-                        src="/img/cloudy.png"
-                        alt=""
-                        width={50}
-                        className=""
-                      /> */}
+                        <img
+                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[3]["weather"][0]["icon"]}.png`}
+                          alt=""
+                          className="text-center"
+                          title={
+                            props.forecastWeather[3]["weather"][0][
+                              "description"
+                            ]
+                          }
+                        />
                       </div>
                       <div className="tempt">
                         <p className="text-slate-50 text-lg">
-                          29<span>&#8451;</span>
+                          {Math.round(props.forecastWeather[3]["main"]["temp"])}
+                          <span>&#8451;</span>
                         </p>
                       </div>
                     </div>
@@ -192,23 +202,24 @@ export default function Monitoring(props) {
                   <div className="fourth bg-primary rounded-3xl mb-10">
                     <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
                       <div className="jam">
-                        <p className="text-slate-50 text-lg">15.00</p>
+                        <p className="text-slate-50 text-lg">18.00</p>
                       </div>
                       <div className="img">
-                        <FontAwesomeIcon
-                          icon={faCloudRain}
-                          className="text-3xl text-slate-50"
-                        ></FontAwesomeIcon>
-                        {/* <img
-                        src="/img/cloudy.png"
-                        alt=""
-                        width={50}
-                        className=""
-                      /> */}
+                        <img
+                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[4]["weather"][0]["icon"]}.png`}
+                          alt=""
+                          className="text-center"
+                          title={
+                            props.forecastWeather[4]["weather"][0][
+                              "description"
+                            ]
+                          }
+                        />
                       </div>
                       <div className="tempt">
                         <p className="text-slate-50 text-lg">
-                          29<span>&#8451;</span>
+                          {Math.round(props.forecastWeather[4]["main"]["temp"])}
+                          <span>&#8451;</span>
                         </p>
                       </div>
                     </div>

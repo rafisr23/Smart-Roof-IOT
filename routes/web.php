@@ -28,8 +28,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/monitoring', function () {
-    return Inertia::render('Monitoring');
-})->middleware(['auth', 'verified'])->name('monitoring');
+// Route::get('/monitoring', function () {
+//     return Inertia::render('Monitoring');
+// })->middleware(['auth', 'verified'])->name('monitoring');
+
+Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->middleware(['auth', 'verified'])->name('monitoring');
 
 require __DIR__.'/auth.php';
