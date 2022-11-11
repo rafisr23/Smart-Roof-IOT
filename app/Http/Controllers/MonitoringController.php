@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+// use FirebaseController;
 
 class MonitoringController extends Controller
 {
@@ -31,6 +32,17 @@ class MonitoringController extends Controller
         date_default_timezone_set('Asia/Jakarta');
         $time = date('H:i:s');
         return date('d M Y');
+    }
+
+    private function firebase() {
+        $firebase = (new Factory)
+            ->withServiceAccount(__DIR__.'/firebase.json')
+            ->withDatabaseUri('https://esp32-firebase-75f9c-default-rtdb.asia-southeast1.firebasedatabase.app/');
+ 
+        $database = $firebase->createDatabase();
+ 
+        $result = $database
+        ->getReference('test');
     }
 
 

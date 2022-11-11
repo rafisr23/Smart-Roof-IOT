@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\FirebaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,5 +34,8 @@ Route::get('/dashboard', function () {
 // })->middleware(['auth', 'verified'])->name('monitoring');
 
 Route::get('/monitoring', [App\Http\Controllers\MonitoringController::class, 'index'])->middleware(['auth', 'verified'])->name('monitoring');
+Route::get('/get-firebase-data', [FirebaseController::class, 'index'])->name('firebase.index');
+
+
 
 require __DIR__.'/auth.php';

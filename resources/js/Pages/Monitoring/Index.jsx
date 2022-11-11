@@ -63,10 +63,10 @@ export default function Monitoring(props) {
                       </p>
                     </div>
                   </div>
-                  <div className="first bg-primary rounded-3xl my-10 p-3">
+                  <div className="first bg-primary rounded-3xl my-10 px-3 py-5">
                     <div className="md:grid grid-cols-3 items-center justify-center content-center text-center">
                       <div className="jam">
-                        <p className="text-slate-50 text-lg">
+                        <p className="text-slate-50 text-xl">
                           {" "}
                           <FontAwesomeIcon
                             icon={faWater}
@@ -76,7 +76,7 @@ export default function Monitoring(props) {
                         </p>
                       </div>
                       <div className="img">
-                        <p className="text-slate-50 text-lg">
+                        <p className="text-slate-50 text-xl">
                           <FontAwesomeIcon
                             icon={faTemperatureThreeQuarters}
                             className="mr-2"
@@ -85,7 +85,7 @@ export default function Monitoring(props) {
                         </p>
                       </div>
                       <div className="wind">
-                        <p className="text-slate-50 text-lg">
+                        <p className="text-slate-50 text-xl">
                           <FontAwesomeIcon
                             icon={faWind}
                             className="mr-2"
@@ -129,7 +129,7 @@ export default function Monitoring(props) {
                       <div className="jam">
                         <p className="text-slate-50 text-lg">09.00</p>
                       </div>
-                      <div className="img">
+                      <div className="img m-auto">
                         <img
                           src={`http://openweathermap.org/img/wn/${props.forecastWeather[1]["weather"][0]["icon"]}.png`}
                           alt=""
@@ -154,11 +154,10 @@ export default function Monitoring(props) {
                       <div className="jam">
                         <p className="text-slate-50 text-lg">12.00</p>
                       </div>
-                      <div className="img">
+                      <div className="img m-auto">
                         <img
                           src={`http://openweathermap.org/img/wn/${props.forecastWeather[2]["weather"][0]["icon"]}.png`}
                           alt=""
-                          className="text-center"
                           title={
                             props.forecastWeather[2]["weather"][0][
                               "description"
@@ -179,11 +178,10 @@ export default function Monitoring(props) {
                       <div className="jam">
                         <p className="text-slate-50 text-lg">15.00</p>
                       </div>
-                      <div className="img">
+                      <div className="img m-auto">
                         <img
                           src={`http://openweathermap.org/img/wn/${props.forecastWeather[3]["weather"][0]["icon"]}.png`}
                           alt=""
-                          className="text-center"
                           title={
                             props.forecastWeather[3]["weather"][0][
                               "description"
@@ -204,11 +202,10 @@ export default function Monitoring(props) {
                       <div className="jam">
                         <p className="text-slate-50 text-lg">18.00</p>
                       </div>
-                      <div className="img">
+                      <div className="img m-auto">
                         <img
                           src={`http://openweathermap.org/img/wn/${props.forecastWeather[4]["weather"][0]["icon"]}.png`}
                           alt=""
-                          className="text-center"
                           title={
                             props.forecastWeather[4]["weather"][0][
                               "description"
