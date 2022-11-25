@@ -1,5 +1,5 @@
 // NPM Modules
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/inertia-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,11 +25,30 @@ import {
 import "flowbite";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
+import { db } from "@/utils/firebase";
+import { onValue, ref } from "firebase/database";
 
 // Local
 import "../../../css/app.css";
 
 export default function Monitoring(props) {
+  const [projects, setProjects] = useState([]);
+  const [temp, setTemp] = useState();
+  const [hum, setHum] = useState();
+
+  useEffect(() => {
+    const query = ref(db, "sensor");
+    return onValue(query, (snapshot) => {
+      const data = snapshot.val();
+      // console.log(data.dht);
+      setTemp(data.dht);
+      setHum(data.hum);
+
+      if (snapshot.exists()) {
+      }
+    });
+  }, []);
+
   return (
     <>
       <ChakraProvider>
@@ -58,7 +77,7 @@ export default function Monitoring(props) {
                     </div>
                     <div className="">
                       <p className="text-slate-50 inline text-8xl text-center">
-                        {Math.round(props.currentTempt["temp"])}
+                        {temp}
                         <span>&#8451;</span>
                       </p>
                     </div>
@@ -81,7 +100,7 @@ export default function Monitoring(props) {
                             icon={faTemperatureThreeQuarters}
                             className="mr-2"
                           ></FontAwesomeIcon>{" "}
-                          {props.currentTempt["humidity"]} %
+                          {hum} %
                         </p>
                       </div>
                       <div className="wind">

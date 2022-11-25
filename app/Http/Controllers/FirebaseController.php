@@ -17,10 +17,16 @@ class FirebaseController extends Controller
         $database = $firebase->createDatabase();
  
         $result = $database
-        ->getReference('test');
+        ->getReference('test/float');
  
+        $result = $result->getValue();
+
+        // $result = json_encode($result);
+        dd($result);
+        // return $result;
+
         echo '<pre>';
-        print_r($result->getvalue());
+        // print_r($result->getvalue(["float"]));
         echo '</pre>';
     }
 }

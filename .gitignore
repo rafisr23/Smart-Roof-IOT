@@ -15,3 +15,4 @@ yarn-error.log
 /.idea
 /.vscode
 /app/Http/Controllers/firebase.json
+/resources/js/utils/firebase.js
