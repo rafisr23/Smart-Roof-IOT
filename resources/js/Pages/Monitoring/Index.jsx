@@ -27,26 +27,114 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import { db } from "@/utils/firebase";
 import { onValue, ref } from "firebase/database";
+import Paho from "paho-mqtt";
 
 // Local
 import "../../../css/app.css";
+
+// Inisialisasi client MQTT
+const clientTemp = new Paho.Client("broker.hivemq.com", 8000, "clientId-temp");
+const clientHum = new Paho.Client("broker.hivemq.com", 8000, "clientId-humi");
+const clientRain = new Paho.Client("broker.hivemq.com", 8000, "clientId-rain");
 
 export default function Monitoring(props) {
   const [projects, setProjects] = useState([]);
   const [temp, setTemp] = useState();
   const [hum, setHum] = useState();
+  const [rain, setRain] = useState();
 
+  // TODO: FETCH DATA FROM MQTT - TEMP
   useEffect(() => {
-    const query = ref(db, "sensor");
-    return onValue(query, (snapshot) => {
-      const data = snapshot.val();
-      // console.log(data.dht);
-      setTemp(data.dht);
-      setHum(data.hum);
-
-      if (snapshot.exists()) {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientTemp.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientTemp ke broker MQTT terputus");
       }
-    });
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientTemp.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      setTemp(message.payloadString);
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientTemp.isConnected()) {
+      clientTemp.connect({
+        onSuccess: () => {
+          console.log("clientTemp berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-temp'
+          clientTemp.subscribe("iot-dzaki-temp");
+        },
+      });
+    } else {
+      console.log("clientTemp sudah terhubung ke broker MQTT");
+    }
+    console.log(clientTemp);
+  }, []);
+
+  // TODO: FETCH DATA FROM MQTT - HUMIDITY
+  useEffect(() => {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientHum.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientHum ke broker MQTT terputus");
+      }
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientHum.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      setHum(message.payloadString);
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientHum.isConnected()) {
+      clientHum.connect({
+        onSuccess: () => {
+          console.log("clientHum berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-humi'
+          clientHum.subscribe("iot-dzaki-humi");
+        },
+      });
+    } else {
+      console.log("clientHum sudah terhubung ke broker MQTT");
+    }
+  }, []);
+
+  // TODO: FETCH DATA FROM MQTT - RAIN
+  useEffect(() => {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientRain.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientRain ke broker MQTT terputus");
+      }
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientRain.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      setRain(message.payloadString);
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientRain.isConnected()) {
+      clientRain.connect({
+        onSuccess: () => {
+          console.log("clientRain berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-humi'
+          clientRain.subscribe("iot-dzaki-rds");
+        },
+      });
+    } else {
+      console.log("clientRain sudah terhubung ke broker MQTT");
+    }
   }, []);
 
   return (
