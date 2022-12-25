@@ -21,7 +21,6 @@ export default function Welcome(props) {
             // >
             //   Monitoring
             // </Link>
-
             <>
               <Link
                 href={route("login")}

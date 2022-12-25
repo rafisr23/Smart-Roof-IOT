@@ -27,27 +27,151 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import { db } from "@/utils/firebase";
 import { onValue, ref } from "firebase/database";
+import Paho from "paho-mqtt";
 
 // Local
 import "../../../css/app.css";
+
+// Inisialisasi client MQTT
+const clientTemp = new Paho.Client("broker.hivemq.com", 8000, "clientId-temp");
+const clientHum = new Paho.Client("broker.hivemq.com", 8000, "clientId-humi");
+const clientRain = new Paho.Client("broker.hivemq.com", 8000, "clientId-rain");
+const clientBtn = new Paho.Client("broker.hivemq.com", 8000, "clientId-btn");
 
 export default function Monitoring(props) {
   const [projects, setProjects] = useState([]);
   const [temp, setTemp] = useState();
   const [hum, setHum] = useState();
+  const [rain, setRain] = useState();
+  const [open, setOpen] = useState(false);
 
+  // TODO: FETCH DATA FROM MQTT - TEMP
   useEffect(() => {
-    const query = ref(db, "sensor");
-    return onValue(query, (snapshot) => {
-      const data = snapshot.val();
-      // console.log(data.dht);
-      setTemp(data.dht);
-      setHum(data.hum);
-
-      if (snapshot.exists()) {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientTemp.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientTemp ke broker MQTT terputus");
       }
-    });
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientTemp.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      setTemp(message.payloadString);
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientTemp.isConnected()) {
+      clientTemp.connect({
+        onSuccess: () => {
+          console.log("clientTemp berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-temp'
+          clientTemp.subscribe("iot-dzaki-temp");
+        },
+      });
+    } else {
+      console.log("clientTemp sudah terhubung ke broker MQTT");
+      clientTemp.subscribe("iot-dzaki-temp");
+    }
   }, []);
+
+  // TODO: FETCH DATA FROM MQTT - HUMIDITY
+  useEffect(() => {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientHum.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientHum ke broker MQTT terputus");
+        console.log(clientHum);
+      }
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientHum.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      setHum(message.payloadString);
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientHum.isConnected()) {
+      clientHum.connect({
+        onSuccess: () => {
+          console.log("clientHum berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-humi'
+          clientHum.subscribe("iot-dzaki-humi");
+        },
+      });
+    } else {
+      console.log("clientHum sudah terhubung ke broker MQTT");
+      clientHum.subscribe("iot-dzaki-humi");
+    }
+  }, []);
+
+  // TODO: FETCH DATA FROM MQTT - RAIN
+  useEffect(() => {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientRain.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientRain ke broker MQTT terputus");
+        console.log(clientRain);
+      }
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientRain.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      if (message.payloadString === "1") {
+        setRain(true);
+      } else {
+        setRain(false);
+      }
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientRain.isConnected()) {
+      clientRain.connect({
+        onSuccess: () => {
+          console.log("clientRain berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-humi'
+          clientRain.subscribe("iot-dzaki-rds");
+        },
+      });
+    } else {
+      console.log("clientRain sudah terhubung ke broker MQTT");
+      clientRain.subscribe("iot-dzaki-rds");
+    }
+  }, []);
+
+  // TODO: SEND DATA BUTTON TO BROKER MQTT
+  const toggleButton = () => {
+    const message = rain ? new Paho.Message("false") : new Paho.Message("true");
+    setRain(!rain);
+
+    clientBtn.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi Button ke broker MQTT terputus");
+      }
+    };
+
+    if (!clientBtn.isConnected()) {
+      clientBtn.connect({
+        onSuccess: () => {
+          console.log("Button berhasil terhubung ke broker MQTT");
+          message.destinationName = "iot-dzaki-button";
+          clientBtn.send(message);
+        },
+      });
+    } else {
+      console.log("Button sudah terhubung ke broker MQTT");
+      message.destinationName = "iot-dzaki-button";
+      clientBtn.send(message);
+    }
+  };
 
   return (
     <>
@@ -67,7 +191,7 @@ export default function Monitoring(props) {
                       icon={faLocationDot}
                       className="mr-2"
                     ></FontAwesomeIcon>
-                    Bojongsoang, Kab. Bandung
+                    Bojongsoang, Kab. Bandungg
                   </p>
                 </div>
                 <div className="grid-rows-2 bg-kedua rounded-3xl ml-10 px-10 pt-10 pb-1">
@@ -121,7 +245,13 @@ export default function Monitoring(props) {
                       ROOF STATUS
                     </h1>
                     <div className="form-control items-center">
-                      <Switch id="email-alerts" size={"lg"} />
+                      <Switch
+                        id="email-alerts"
+                        size={"lg"}
+                        onChange={toggleButton}
+                        value={rain}
+                        isChecked={rain}
+                      />
                     </div>
                   </div>
                 </div>
