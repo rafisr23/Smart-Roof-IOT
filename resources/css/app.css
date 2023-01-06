@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=fallback');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 .bg-primary {
   background-color: #141e45;
@@ -9,3 +11,4 @@
 .bg-kedua {
   background-color: rgba(23, 36, 82, 254);
 }
+

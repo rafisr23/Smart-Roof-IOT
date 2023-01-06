@@ -44,6 +44,7 @@ export default function Monitoring(props) {
   const [hum, setHum] = useState();
   const [rain, setRain] = useState();
   const [open, setOpen] = useState(false);
+  const [button, setButton] = useState(false);
 
   // TODO: FETCH DATA FROM MQTT - TEMP
   useEffect(() => {
@@ -172,6 +173,43 @@ export default function Monitoring(props) {
       clientBtn.send(message);
     }
   };
+
+  // TODO: FETCH DATA FROM MQTT - BUTTON
+  useEffect(() => {
+    // Fungsi callback ketika terhubung ke broker MQTT
+    clientBtn.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log("Koneksi clientBtn ke broker MQTT terputus");
+        console.log(clientBtn);
+      }
+    };
+
+    // Fungsi callback ketika pesan diterima dari broker MQTT
+    clientBtn.onMessageArrived = (message) => {
+      console.log(
+        `Pesan diterima dari topic ${message.destinationName}: ${message.payloadString}`
+      );
+      if (message.payloadString === "true") {
+        setRain(true);
+      } else {
+        setRain(false);
+      }
+    };
+
+    // Koneksikan ke broker MQTT
+    if (!clientBtn.isConnected()) {
+      clientBtn.connect({
+        onSuccess: () => {
+          console.log("clientBtn berhasil terhubung ke broker MQTT");
+          // Subscribe ke topic 'iot-dzaki-button'
+          clientBtn.subscribe("iot-dzaki-button");
+        },
+      });
+    } else {
+      console.log("clientBtn sudah terhubung ke broker MQTT");
+      clientBtn.subscribe("iot-dzaki-button");
+    }
+  }, []);
 
   return (
     <>
