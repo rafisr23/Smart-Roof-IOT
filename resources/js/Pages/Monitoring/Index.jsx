@@ -1,7 +1,9 @@
 // NPM Modules
 import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/inertia-react";
+import { Link, Head } from "@inertiajs/inertia-react";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import NavLink from "@/Components/NavLink";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag, faMoon } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -16,18 +18,13 @@ import {
   faLocation,
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
-// import {
-//   solid,
-//   regular,
-//   brands,
-//   icon,
-// } from "@fortawesome/fontawesome-svg-core/import.macro"; // <-- import styles to be used
 import "flowbite";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import { db } from "@/utils/firebase";
 import { onValue, ref } from "firebase/database";
 import Paho from "paho-mqtt";
+import Header from "../partials/Header";
 
 // Local
 import "../../../css/app.css";
@@ -45,6 +42,15 @@ export default function Monitoring(props) {
   const [rain, setRain] = useState();
   const [open, setOpen] = useState(false);
   const [button, setButton] = useState(false);
+  const [top, setTop] = useState(true);
+
+  useEffect(() => {
+    const scrollHandler = () => {
+      window.pageYOffset > 10 ? setTop(false) : setTop(true);
+    };
+    window.addEventListener("scroll", scrollHandler);
+    return () => window.removeEventListener("scroll", scrollHandler);
+  }, [top]);
 
   // TODO: FETCH DATA FROM MQTT - TEMP
   useEffect(() => {
@@ -214,205 +220,324 @@ export default function Monitoring(props) {
   return (
     <>
       <ChakraProvider>
-        <AuthenticatedLayout auth={props.auth} errors={props.errors}>
-          <Head title="Monitoring" />
-          <div className="bg-primary">
-            <div className="md:grid grid-cols-2 pb-10">
-              {/* LEFT SIDE */}
-              <div className="grid-rows-3 ">
-                <div className="mx-10 my-10">
-                  <h1 className="text-slate-50 text-5xl font-bold">
-                    Smart Roof Monitoring
-                  </h1>
-                  <p className="text-slate-400 mt-1">
-                    <FontAwesomeIcon
-                      icon={faLocationDot}
-                      className="mr-2"
-                    ></FontAwesomeIcon>
-                    Bojongsoang, Kab. Bandungg
-                  </p>
-                </div>
-                <div className="grid-rows-2 bg-kedua rounded-3xl ml-10 px-10 pt-10 pb-1">
-                  <div className="md:grid grid-cols-2 items-center justify-center content-center">
-                    <div className="">
-                      <img src={props.icon} alt="" width={250} className="" />
-                    </div>
-                    <div className="">
-                      <p className="text-slate-50 inline text-8xl text-center">
-                        {temp}
-                        <span>&#8451;</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="first bg-primary rounded-3xl my-10 px-3 py-5">
-                    <div className="md:grid grid-cols-3 items-center justify-center content-center text-center">
-                      <div className="jam">
-                        <p className="text-slate-50 text-xl">
-                          {" "}
-                          <FontAwesomeIcon
-                            icon={faWater}
-                            className="mr-2"
-                          ></FontAwesomeIcon>
-                          6%
-                        </p>
-                      </div>
-                      <div className="img">
-                        <p className="text-slate-50 text-xl">
-                          <FontAwesomeIcon
-                            icon={faTemperatureThreeQuarters}
-                            className="mr-2"
-                          ></FontAwesomeIcon>{" "}
-                          {hum} %
-                        </p>
-                      </div>
-                      <div className="wind">
-                        <p className="text-slate-50 text-xl">
-                          <FontAwesomeIcon
-                            icon={faWind}
-                            className="mr-2"
-                          ></FontAwesomeIcon>{" "}
-                          {props.currentTempt["wind"]} m/s
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="control bg-kedua rounded-3xl ml-10 mt-10">
-                  <div className="md:grid grid-cols-2 items-center justify-center content-center p-8">
-                    <h1 className="text-slate-50 text-3xl font-bold text-center">
-                      ROOF STATUS
-                    </h1>
-                    <div className="form-control items-center">
-                      <Switch
-                        id="email-alerts"
-                        size={"lg"}
-                        onChange={toggleButton}
-                        value={rain}
-                        isChecked={rain}
+        <div className="flex flex-col min-h-screen overflow-hidden bg-primary">
+          <header
+            className={`fixed w-full z-30 transition duration-300 ease-in-out bg-primary backdrop-blur-xl ${
+              !top && " bg-primary backdrop-blur-xl shadow-lg"
+            }`}
+          >
+            <div className=" mx-auto px-5 sm:px-6">
+              <div className="flex items-center justify-between h-16 md:h-20">
+                {/* Site branding */}
+                <div className="flex-shrink-0 mr-4">
+                  {/* Logo */}
+                  <Link href="/" className="block" aria-label="Cruip">
+                    <svg
+                      className="w-8 h-8"
+                      viewBox="0 0 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <defs>
+                        <radialGradient
+                          cx="21.152%"
+                          cy="86.063%"
+                          fx="21.152%"
+                          fy="86.063%"
+                          r="79.941%"
+                          id="header-logo"
+                        >
+                          <stop stopColor="#4FD1C5" offset="0%" />
+                          <stop stopColor="#81E6D9" offset="25.871%" />
+                          <stop stopColor="#338CF5" offset="100%" />
+                        </radialGradient>
+                      </defs>
+                      <rect
+                        width="32"
+                        height="32"
+                        rx="16"
+                        fill="url(#header-logo)"
+                        fillRule="nonzero"
                       />
-                    </div>
-                  </div>
+                    </svg>
+                  </Link>
                 </div>
-              </div>
 
-              {/* RIGHT SIDE */}
-              <div className="grid-rows-2 ml-14">
-                <div className="user p-10 mx-10">
-                  <h1 className="text-slate-50 text-3xl font-bold">
-                    Good Morning, {props.auth.user.name}
-                  </h1>
-                  <p className="text-slate-400 mt-1">Have a nice day!</p>
-                  {/* <div className="profile inline">
-                  <img src="/img/man.png" alt="" width={70} className="" />
-                </div> */}
-                </div>
-                <div className="weather p-10 grid-rows-5 bg-kedua rounded-3xl mx-10">
-                  <div className="today mb-10">
-                    <h1 className="text-slate-50 text-2xl font-bold">Today</h1>
-                    <p className="text-slate-400 text-xl">{props.date}</p>
-                  </div>
-                  <div className="first bg-primary rounded-3xl mb-10">
-                    <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
-                      <div className="jam">
-                        <p className="text-slate-50 text-lg">09.00</p>
-                      </div>
-                      <div className="img m-auto">
-                        <img
-                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[1]["weather"][0]["icon"]}.png`}
-                          alt=""
-                          className="text-center"
-                          title={
-                            props.forecastWeather[1]["weather"][0][
-                              "description"
-                            ]
-                          }
-                        />
-                      </div>
-                      <div className="tempt">
-                        <p className="text-slate-50 text-lg">
-                          {Math.round(props.forecastWeather[1]["main"]["temp"])}
-                          <span>&#8451;</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="second bg-primary rounded-3xl mb-10">
-                    <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
-                      <div className="jam">
-                        <p className="text-slate-50 text-lg">12.00</p>
-                      </div>
-                      <div className="img m-auto">
-                        <img
-                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[2]["weather"][0]["icon"]}.png`}
-                          alt=""
-                          title={
-                            props.forecastWeather[2]["weather"][0][
-                              "description"
-                            ]
-                          }
-                        />
-                      </div>
-                      <div className="tempt">
-                        <p className="text-slate-50 text-lg">
-                          {Math.round(props.forecastWeather[2]["main"]["temp"])}
-                          <span>&#8451;</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="third bg-primary rounded-3xl mb-10">
-                    <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
-                      <div className="jam">
-                        <p className="text-slate-50 text-lg">15.00</p>
-                      </div>
-                      <div className="img m-auto">
-                        <img
-                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[3]["weather"][0]["icon"]}.png`}
-                          alt=""
-                          title={
-                            props.forecastWeather[3]["weather"][0][
-                              "description"
-                            ]
-                          }
-                        />
-                      </div>
-                      <div className="tempt">
-                        <p className="text-slate-50 text-lg">
-                          {Math.round(props.forecastWeather[3]["main"]["temp"])}
-                          <span>&#8451;</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="fourth bg-primary rounded-3xl mb-10">
-                    <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
-                      <div className="jam">
-                        <p className="text-slate-50 text-lg">18.00</p>
-                      </div>
-                      <div className="img m-auto">
-                        <img
-                          src={`http://openweathermap.org/img/wn/${props.forecastWeather[4]["weather"][0]["icon"]}.png`}
-                          alt=""
-                          title={
-                            props.forecastWeather[4]["weather"][0][
-                              "description"
-                            ]
-                          }
-                        />
-                      </div>
-                      <div className="tempt">
-                        <p className="text-slate-50 text-lg">
-                          {Math.round(props.forecastWeather[4]["main"]["temp"])}
-                          <span>&#8451;</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Site navigation */}
+                <nav className="flex flex-grow">
+                  <ul className="flex flex-grow justify-start flex-wrap items-center">
+                    <li>
+                      <Link
+                        href={route("home")}
+                        className="font-medium text-white hover:text-slate-500 px-5 py-3 flex items-center transition duration-150 ease-in-out"
+                      >
+                        Home
+                      </Link>
+                    </li>
+                    {props.auth.user ? (
+                      <li>
+                        <Link
+                          href={route("monitoring")}
+                          className="font-medium text-white hover:text-slate-500 px-5 py-3 flex items-center transition duration-150 ease-in-out"
+                        >
+                          Monitoring
+                        </Link>
+                      </li>
+                    ) : (
+                      <li></li>
+                    )}
+                  </ul>
+                  <ul className="flex flex-grow justify-end flex-wrap items-center">
+                    {props.auth.user ? (
+                      <>
+                        <li>
+                          <Link
+                            method="post"
+                            href={route("logout")}
+                            as="button"
+                            className="btn-sm text-white bg-red-500 hover:bg-red-900 rounded"
+                          >
+                            Log Out
+                          </Link>
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li>
+                          <Link
+                            href={route("login")}
+                            className="font-medium text-gray-600 hover:text-gray-900 px-5 py-3 flex items-center transition duration-150 ease-in-out"
+                          >
+                            Log in
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href={route("register")}
+                            className="btn-sm text-gray-200 bg-gray-900 hover:bg-gray-800 ml-3 p-2 rounded"
+                          >
+                            Register
+                          </Link>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </nav>
               </div>
             </div>
-          </div>
-        </AuthenticatedLayout>
+          </header>
+
+          <main className="flex-grow">
+            <section className="relative">
+              <div className="md:grid grid-cols-2 pb-10">
+                {/* LEFT SIDE */}
+                <div className="grid-rows-3 ">
+                  <div className="mx-10 mb-10 mt-20">
+                    <h1 className="text-slate-50 text-5xl font-bold">
+                      Smart Roof Monitoring
+                    </h1>
+                    <p className="text-slate-400 mt-1">
+                      <FontAwesomeIcon
+                        icon={faLocationDot}
+                        className="mr-2"
+                      ></FontAwesomeIcon>
+                      Bojongsoang, Kab. Bandungg
+                    </p>
+                  </div>
+                  <div className="grid-rows-2 bg-kedua rounded-3xl ml-10 px-10 pt-10 pb-1">
+                    <div className="md:grid grid-cols-2 items-center justify-center content-center">
+                      <div className="">
+                        <img src={props.icon} alt="" width={250} className="" />
+                      </div>
+                      <div className="">
+                        <p className="text-slate-50 inline text-8xl text-center">
+                          {temp}
+                          <span>&#8451;</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="first bg-primary rounded-3xl my-10 px-3 py-5">
+                      <div className="md:grid grid-cols-3 items-center justify-center content-center text-center">
+                        <div className="jam">
+                          <p className="text-slate-50 text-xl">
+                            {" "}
+                            <FontAwesomeIcon
+                              icon={faWater}
+                              className="mr-2"
+                            ></FontAwesomeIcon>
+                            6%
+                          </p>
+                        </div>
+                        <div className="img">
+                          <p className="text-slate-50 text-xl">
+                            <FontAwesomeIcon
+                              icon={faTemperatureThreeQuarters}
+                              className="mr-2"
+                            ></FontAwesomeIcon>{" "}
+                            {hum} %
+                          </p>
+                        </div>
+                        <div className="wind">
+                          <p className="text-slate-50 text-xl">
+                            <FontAwesomeIcon
+                              icon={faWind}
+                              className="mr-2"
+                            ></FontAwesomeIcon>{" "}
+                            {props.currentTempt["wind"]} m/s
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="control bg-kedua rounded-3xl ml-10 mt-10">
+                    <div className="md:grid grid-cols-2 items-center justify-center content-center p-8">
+                      <h1 className="text-slate-50 text-3xl font-bold text-center">
+                        ROOF STATUS
+                      </h1>
+                      <div className="form-control items-center">
+                        <Switch
+                          id="email-alerts"
+                          size={"lg"}
+                          onChange={toggleButton}
+                          value={rain}
+                          isChecked={rain}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT SIDE */}
+                <div className="grid-rows-2 ml-14">
+                  <div className="user p-10 my-10">
+                    <h1 className="text-slate-50 text-3xl font-bold">
+                      Good Morning, {props.auth.user.name}
+                    </h1>
+                    <p className="text-slate-400 mt-1">Have a nice day!</p>
+                    {/* <div className="profile inline">
+                      <img src="/img/man.png" alt="" width={70} className="" />
+                    </div> */}
+                  </div>
+                  <div className="weather p-10 grid-rows-5 bg-kedua rounded-3xl mx-10">
+                    <div className="today mb-10">
+                      <h1 className="text-slate-50 text-2xl font-bold">
+                        Today
+                      </h1>
+                      <p className="text-slate-400 text-xl">{props.date}</p>
+                    </div>
+                    <div className="first bg-primary rounded-3xl mb-10">
+                      <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
+                        <div className="jam">
+                          <p className="text-slate-50 text-lg">09.00</p>
+                        </div>
+                        <div className="img m-auto">
+                          <img
+                            src={`http://openweathermap.org/img/wn/${props.forecastWeather[1]["weather"][0]["icon"]}.png`}
+                            alt=""
+                            className="text-center"
+                            title={
+                              props.forecastWeather[1]["weather"][0][
+                                "description"
+                              ]
+                            }
+                          />
+                        </div>
+                        <div className="tempt">
+                          <p className="text-slate-50 text-lg">
+                            {Math.round(
+                              props.forecastWeather[1]["main"]["temp"]
+                            )}
+                            <span>&#8451;</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="second bg-primary rounded-3xl mb-10">
+                      <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
+                        <div className="jam">
+                          <p className="text-slate-50 text-lg">12.00</p>
+                        </div>
+                        <div className="img m-auto">
+                          <img
+                            src={`http://openweathermap.org/img/wn/${props.forecastWeather[2]["weather"][0]["icon"]}.png`}
+                            alt=""
+                            title={
+                              props.forecastWeather[2]["weather"][0][
+                                "description"
+                              ]
+                            }
+                          />
+                        </div>
+                        <div className="tempt">
+                          <p className="text-slate-50 text-lg">
+                            {Math.round(
+                              props.forecastWeather[2]["main"]["temp"]
+                            )}
+                            <span>&#8451;</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="third bg-primary rounded-3xl mb-10">
+                      <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
+                        <div className="jam">
+                          <p className="text-slate-50 text-lg">15.00</p>
+                        </div>
+                        <div className="img m-auto">
+                          <img
+                            src={`http://openweathermap.org/img/wn/${props.forecastWeather[3]["weather"][0]["icon"]}.png`}
+                            alt=""
+                            title={
+                              props.forecastWeather[3]["weather"][0][
+                                "description"
+                              ]
+                            }
+                          />
+                        </div>
+                        <div className="tempt">
+                          <p className="text-slate-50 text-lg">
+                            {Math.round(
+                              props.forecastWeather[3]["main"]["temp"]
+                            )}
+                            <span>&#8451;</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="fourth bg-primary rounded-3xl mb-10">
+                      <div className="md:grid grid-cols-3 items-center justify-center content-center text-center py-2">
+                        <div className="jam">
+                          <p className="text-slate-50 text-lg">18.00</p>
+                        </div>
+                        <div className="img m-auto">
+                          <img
+                            src={`http://openweathermap.org/img/wn/${props.forecastWeather[4]["weather"][0]["icon"]}.png`}
+                            alt=""
+                            title={
+                              props.forecastWeather[4]["weather"][0][
+                                "description"
+                              ]
+                            }
+                          />
+                        </div>
+                        <div className="tempt">
+                          <p className="text-slate-50 text-lg">
+                            {Math.round(
+                              props.forecastWeather[4]["main"]["temp"]
+                            )}
+                            <span>&#8451;</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+
+        {/* <div className="">
+        </div> */}
       </ChakraProvider>
     </>
   );

@@ -9,7 +9,7 @@ export default function HeroHome() {
   return (
     <section className="relative">
       {/* Illustration behind hero content */}
-      <div
+      {/* <div
         className="absolute left-1/2 transform -translate-x-1/2 bottom-0 pointer-events-none"
         aria-hidden="true"
       >
@@ -37,7 +37,7 @@ export default function HeroHome() {
             <circle cx="155" cy="443" r="64" />
           </g>
         </svg>
-      </div>
+      </div> */}
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Hero content */}
@@ -48,17 +48,24 @@ export default function HeroHome() {
               className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-400"
               data-aos="zoom-y-out"
             >
-              Smart Roof 
+              Smart Roof
             </h1>
-            <h3 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-400"
-              data-aos="zoom-y-out">Internet of Things</h3>
+            <h3
+              className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-400"
+              data-aos="zoom-y-out"
+            >
+              Internet of Things
+            </h3>
             <div className="max-w-3xl mx-auto">
               <p
                 className="text-xl text-gray-600 mb-8"
                 data-aos="zoom-y-out"
                 data-aos-delay="150"
               >
-                Sebuah alat yang dapat mengetahui kondisi cuaca di atas atap rumah kita. Alat ini juga dapat mengirimkan data-data tersebut ke server, sehingga kita dapat melihat kondisi cuaca di rumah kita dari mana saja.
+                Sebuah alat yang dapat mengetahui kondisi cuaca di atas atap
+                rumah kita. Alat ini juga dapat mengirimkan data-data tersebut
+                ke server, sehingga kita dapat melihat kondisi cuaca di rumah
+                kita dari mana saja.
               </p>
               <div
                 className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center"
@@ -84,9 +91,6 @@ export default function HeroHome() {
               </div>
             </div>
           </div>
-
-          {/* Hero image */}
-          {/*  */}
         </div>
       </div>
     </section>

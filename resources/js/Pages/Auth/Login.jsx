@@ -105,3 +105,67 @@ export default function Login({ status, canResetPassword }) {
     </GuestLayout>
   );
 }
+// import React, { useEffect, useState } from "react";
+// import Checkbox from "@/Components/Checkbox";
+// import GuestLayout from "@/Layouts/GuestLayout";
+// import InputError from "@/Components/InputError";
+// import InputLabel from "@/Components/InputLabel";
+// import PrimaryButton from "@/Components/PrimaryButton";
+// import TextInput from "@/Components/TextInput";
+// import { Head, Link, useForm } from "@inertiajs/inertia-react";
+
+// export default function Login({ status, canResetPassword }) {
+//   const login = async (email, password) => {
+//     const response = await fetch(
+//       "https://smartroof-api.000webhostapp.com/login.php",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/x-www-form-urlencoded",
+//         },
+//         body: JSON.stringify({ email, password }),
+//       }
+//     );
+//     const data = await response.json();
+//     if (response.status === 200) {
+//       // Save the JWT token
+//       localStorage.setItem("token", data.token);
+//       // Redirect to the home page
+//       window.location.href = "/";
+//     } else {
+//       // Handle the error
+//       console.error(data.message);
+//     }
+//   };
+
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+
+//   const handleSubmit = (event) => {
+//     event.preventDefault();
+//     login(email, password);
+//   };
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <label>
+//         email:
+//         <input
+//           type="text"
+//           value={email}
+//           onChange={(event) => setEmail(event.target.value)}
+//         />
+//       </label>
+//       <br />
+//       <label>
+//         password:
+//         <input
+//           type="password"
+//           value={password}
+//           onChange={(event) => setPassword(event.target.value)}
+//         />
+//       </label>
+//       <br />
+//       <button type="submit">Login</button>
+//     </form>
+//   );
+// }
