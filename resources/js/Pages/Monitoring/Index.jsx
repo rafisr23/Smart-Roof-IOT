@@ -22,12 +22,15 @@ import "flowbite";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import { db } from "@/utils/firebase";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, set, update } from "firebase/database";
+// import { FirebaseApp } from "firebase/app";
 import Paho from "paho-mqtt";
 import Header from "../partials/Header";
+import axios from "axios";
 
 // Local
 import "../../../css/app.css";
+import { FirebaseError } from "firebase/app";
 
 // Inisialisasi client MQTT
 const clientTemp = new Paho.Client("broker.hivemq.com", 8000, "clientId-temp");
@@ -37,9 +40,9 @@ const clientBtn = new Paho.Client("broker.hivemq.com", 8000, "clientId-btn");
 
 export default function Monitoring(props) {
   const [projects, setProjects] = useState([]);
-  const [temp, setTemp] = useState();
-  const [hum, setHum] = useState();
-  const [rain, setRain] = useState();
+  const [temp, setTemp] = useState(28);
+  const [hum, setHum] = useState(21);
+  const [rain, setRain] = useState(true);
   const [open, setOpen] = useState(false);
   const [button, setButton] = useState(false);
   const [top, setTop] = useState(true);
@@ -51,6 +54,28 @@ export default function Monitoring(props) {
     window.addEventListener("scroll", scrollHandler);
     return () => window.removeEventListener("scroll", scrollHandler);
   }, [top]);
+
+  // TODO: FETCH DATA FROM FIREBASE
+  useEffect(() => {
+    const query = ref(db, "sensor");
+    return onValue(query, (snapshot) => {
+      const data = snapshot.val();
+      console.log(`button : ${data.btn}`);
+      setRain(data.btn);
+
+      if (snapshot.exists()) {
+      }
+    });
+  }, []);
+
+  // TODO: SEND DATA TO FIREBASE WITHOUT AXIOS
+  const handleButton = () => {
+    setButton(!button);
+    const query = ref(db, "sensor");
+    set(query, {
+      btn: button,
+    });
+  };
 
   // TODO: FETCH DATA FROM MQTT - TEMP
   useEffect(() => {
@@ -217,12 +242,30 @@ export default function Monitoring(props) {
     }
   }, []);
 
+  // TODO: SAVE DATA TO API
+  // useEffect(() => {
+  //   const saveData = async () => {
+  //     fetch("http://smartroof-api.000webhostapp.com/insert.php", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         temp: temp,
+  //         hum: hum,
+  //         is_rain: rain,
+  //       }),
+  //     });
+  //   };
+  //   saveData();
+  // }, [temp, hum, rain]);
+
   return (
     <>
       <ChakraProvider>
         <div className="flex flex-col min-h-screen overflow-hidden bg-primary">
           <header
-            className={`fixed w-full z-30 transition duration-300 ease-in-out bg-primary backdrop-blur-xl ${
+            className={`fixed w-full z-30 transition duration-300 ease-in-out bg-kedua backdrop-blur-xl ${
               !top && " bg-primary backdrop-blur-xl shadow-lg"
             }`}
           >
@@ -331,7 +374,7 @@ export default function Monitoring(props) {
               <div className="md:grid grid-cols-2 pb-10">
                 {/* LEFT SIDE */}
                 <div className="grid-rows-3 ">
-                  <div className="mx-10 mb-10 mt-20">
+                  <div className="mx-10 mb-10 mt-28">
                     <h1 className="text-slate-50 text-5xl font-bold">
                       Smart Roof Monitoring
                     </h1>
@@ -397,7 +440,7 @@ export default function Monitoring(props) {
                         <Switch
                           id="email-alerts"
                           size={"lg"}
-                          onChange={toggleButton}
+                          onChange={handleButton}
                           value={rain}
                           isChecked={rain}
                         />
@@ -408,7 +451,7 @@ export default function Monitoring(props) {
 
                 {/* RIGHT SIDE */}
                 <div className="grid-rows-2 ml-14">
-                  <div className="user p-10 my-10">
+                  <div className="user p-10 mb-10 mt-20">
                     <h1 className="text-slate-50 text-3xl font-bold">
                       Good Morning, {props.auth.user.name}
                     </h1>
